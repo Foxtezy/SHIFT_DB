@@ -14,12 +14,12 @@ ALTER SEQUENCE shops_id_seq RESTART WITH 1;
 
 insert into products (code, name)
 select md5(random()::text), faker.word()
-from generate_series(1, 200) on conflict do nothing;
+from generate_series(1, 1000) on conflict do nothing;
 
 
 insert into employees (first_name, last_name, phone, e_mail, job_name)
 select faker.first_name(), faker.last_name(), faker.phone_number(), faker.email(), substring(faker.job(), 1, 50)
-from generate_series(1, 1000);
+from generate_series(1, 600);
 
 insert into shops (name, region, city, address, manager_id)
 select faker.company(), faker.state(), faker.city(), faker.address(), id
@@ -34,15 +34,16 @@ update employees SET shop_id =
 update employees SET shop_id = null where random() > 0.9;
 
 insert into purchases (datetime, amount)
-select faker.date_between()::DATE + (random() * interval '1d'), ceil(random() * 10000)
-from generate_series(1, 10000);
+select now() - (random() * interval '90d'), ceil(random() * 1000)
+from generate_series(1, 500);
 
 update purchases SET seller_id =
                          (select id + amount - amount from employees order by random() limit 1);
 
 insert into purchase_receipts (purchase_id, ordinal_number, product_id, quantity, amount_full, amount_discount)
-select purchases.id, ceil(random() * 10), products.id, ceil(random() * 10), ceil(random() * 100), ceil(random() * 100)
+select purchases.id, ceil(random() * 10), products.id, ceil(random() * 10), ceil(random() * 100), ceil(random() * 20)
 from products, purchases
+where random() < 0.01
 order by random() on conflict do nothing;
 
 
