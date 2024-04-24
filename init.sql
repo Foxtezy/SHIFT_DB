@@ -49,6 +49,6 @@ create table PURCHASE_RECEIPTS
     PRODUCT_ID      bigint not null references PRODUCTS,
     QUANTITY        int    not null check ( QUANTITY > 0 ),
     AMOUNT_FULL     int    not null check ( AMOUNT_FULL > 0 ),
-    AMOUNT_DISCOUNT int    not null check ( AMOUNT_DISCOUNT > 0 ),
+    AMOUNT_DISCOUNT int    not null check ( AMOUNT_DISCOUNT >= 0 ),
     primary key (PURCHASE_ID, ORDINAL_NUMBER)
 )
