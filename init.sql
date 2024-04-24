@@ -21,11 +21,18 @@ create table SHOPS
     REGION     varchar(200) not null check ( REGION <> '' ),
     CITY       varchar(200) not null check ( CITY <> '' ),
     ADDRESS    varchar(200) not null check ( ADDRESS <> '' ),
-    MANAGER_ID bigint not null references EMPLOYEES
+    MANAGER_ID bigint       not null references EMPLOYEES
 );
 
 alter table EMPLOYEES
     add column SHOP_ID bigint references SHOPS;
+
+comment on table EMPLOYEES is 'Список всех сотрудников компании';
+comment on column EMPLOYEES.job_name is 'Должность, например, «Продавец-консультант», «Управляющий», «Бухгалтер», «Уборщик» и т.д.';
+comment on column EMPLOYEES.shop_id is 'Ссылка на магазин, в котором работает сотрудник (если сотрудник не закреплён за конкретным магазином, то данное поле не заполняется)';
+
+comment on table SHOPS is 'Список магазинов с их адресами';
+comment on column SHOPS.manager_id is 'Ссылка на сотрудника, который является директором магазина';
 
 create table PRODUCTS
 (
@@ -34,6 +41,8 @@ create table PRODUCTS
     NAME varchar(200)       not null check (NAME <> '' )
 );
 
+comment on table PRODUCTS is 'Товарный каталог';
+
 create table PURCHASES
 (
     ID        bigint primary key generated always as identity,
@@ -41,6 +50,11 @@ create table PURCHASES
     AMOUNT    int       not null check ( AMOUNT > 0 ),
     SELLER_ID bigint references EMPLOYEES
 );
+
+comment on table PURCHASES is 'Покупки';
+comment on column PURCHASES.datetime is 'Дата и время совершения покупки';
+comment on column PURCHASES.amount is 'Уплаченная покупателем сумма покупки с учётом всех скидок';
+comment on column PURCHASES.seller_id is 'Ссылка на сотрудника, который совершил продажу (данное поле не заполняется, если сделка была совершена без помощи продавца, например, клиент самостоятельно выбрал товар и обратился в пункт выдачи)';
 
 create table PURCHASE_RECEIPTS
 (
@@ -51,4 +65,11 @@ create table PURCHASE_RECEIPTS
     AMOUNT_FULL     int    not null check ( AMOUNT_FULL > 0 ),
     AMOUNT_DISCOUNT int    not null check ( AMOUNT_DISCOUNT >= 0 ),
     primary key (PURCHASE_ID, ORDINAL_NUMBER)
-)
+);
+
+comment on table PURCHASE_RECEIPTS is 'Чеки покупок';
+comment on column PURCHASE_RECEIPTS.ordinal_number is 'Порядковый номер позиции в чеке';
+comment on column PURCHASE_RECEIPTS.product_id is 'Ссылка на товар';
+comment on column PURCHASE_RECEIPTS.quantity is 'Количество купленного товара';
+comment on column PURCHASE_RECEIPTS.amount_full is 'Полная стоимость товара (для данного количества товара и без учёта скидок)';
+comment on column PURCHASE_RECEIPTS.amount_discount is 'Предоставленная на товар скидка (может быть от 0 до 100% стоимости товара)';

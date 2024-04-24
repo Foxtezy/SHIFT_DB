@@ -28,7 +28,7 @@ from employees ORDER BY random() LIMIT 100;
 update employees SET shop_id =
     (select id + length(e_mail) - length(e_mail) from shops order by random() limit 1);
 
-/* length(e_mail) - length(e_mail) это черная магия которая заставляет думать postgres думать,
+/* length(e_mail) - length(e_mail) это черная магия которая заставляет postgres думать,
    что подзапрос каждый раз возвращает разные данные (что на самом деле так и есть) и выполнять его на каждый shop_id
  */
 update employees SET shop_id = null where random() > 0.9;
